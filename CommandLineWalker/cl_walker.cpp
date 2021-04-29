@@ -100,5 +100,9 @@ int main() {
 				fPlayerY += cosf(fPlayerA) * fSpeed * fElapsedTime;
 			}
 		}
+		for (int x = 0; x < nScreenWidth; ++x) {
+			// For each column, calulate the projected ray angle into space
+			float fRayAngle = (fPlayer - fFOV / 2.0f) + ((float)x / (float)nScreenWidth) * fFOV;
+		}
 	}
 }
