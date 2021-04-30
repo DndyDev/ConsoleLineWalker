@@ -21,7 +21,8 @@ float fPlayerY = 5.09f;
 float fPlayerA = 0.0f;
 // Field of Vision
 float fFOV = 3.14159f / 4.0f;
-/// Maximum render distance
+// Maximum render distance
+// because 16 pixel map
 float fDepth = 16.0f;
 
 float fSpeed = 5.0f;
@@ -40,69 +41,53 @@ int main() {
 	
 	wstring map;
 
-	map += L"#########.......";
-	map += L"#...............";
-	map += L"#........#######";
+	map += L"################";
 	map += L"#..............#";
-	map += L"#......##......#";
-	map += L"#......##......#";
 	map += L"#..............#";
-	map += L"###............#";
-	map += L"##.............#";
-	map += L"##.....####..###";
-	map += L"##.....#.....###";
-	map += L"##.....#.....###";
-	map += L"##...........###";
-	map += L"##......########";
-	map += L"##.............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
+	map += L"#..............#";
 	map += L"################";
 
-	auto tp1 = chrono::system_clock::now();
-	auto tp2 = chrono::system_clock::now();
 
 	while (true) {
-		//We'll need time differential per frame to calculate modification
-		//to movement speeds,to ensure consistant movement, as ray-tracing
-		// is non-determinic
-		tp2 = chrono::system_clock::now();
-		chrono::duration<float> elapsedTime = tp2 - tp1;
-		tp1 = tp2;
-		float fElapsedTime = elapsedTime.count();
 
+		for (int x < 0; x < nScreenWidth; x++) {
 
-		//Handle left(Counterclock-wise) Rotation
-		if (GetAsyncKeyState((unsigned short)'A') & 0x8000)
-			fPlayerA -= (fSpeed * 0.75f) * fElapsedTime;
+			//For each column calc the projected ray angle	into world space
+			float fRayAngle = (fPlayerA - fFOV / 2.0f) + ((float)x / nScreenWidth) * fFOV;
 
-		//Handle right(CW) Rotation
-		if (GetAsyncKeyState((unsigned short)'D') & 0x8000)
-			fPlayerA += (fSpeed * 0.75f) * fElapsedTime;
+			float fDistanceToWall = 0;
+			bool bHitHall = false;
 
-		//Handle Forward movement & collision
-		if (GetAsyncKeyState((unsigned short)'W') & 0x8000) {
-			fPlayerX += sinf(fPlayerA) * fSpeed * fElapsedTime;
-			fPlayerY += cosf(fPlayerA) * fSpeed * fElapsedTime;
+			// Unit vector for ray in player space
+			float fEyeX = sinf(fRayAngle);
+			float fEyeY = cosf(fRayAngle);
 
-			if (map.c_str()[(int)fPlayerX * nMapWidth + (int)fPlayerY] == '#')
-			{
-				fPlayerX -= sinf(fPlayerA) * fSpeed * fElapsedTime;;
-				fPlayerY -= cosf(fPlayerA) * fSpeed * fElapsedTime;;
+			while (!bHitWall && fDistanceToWall < fDepth) {
+				fDistanceToWall += 0.1f
+
+					int nTestX = (int)(fPlayerX + fEyeX * fDistanceToWall);
+					int nTestY = (int)(fPlayerY + fEyeX * fDistanceToWall);
+					// Test if aray is out of bounds
+					if (nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHight) {
+						// Just set distance to maximum depth
+						bHitWall = true;
+						fDistanceToWall = fDepth;
+
+					}
 			}
 		}
-
-		//Handle backward movement & collision
-		if (GetAsyncKeyState((unsigned short)'S') & 0x8000) {
-			fPlayerX -= sinf(fPlayerA) * fSpeed * fElapsedTime;;
-			fPlayerX -= cosf(fPlayerA) * fSpeed * fElapsedTime;;
-
-			if (map.c_str()[(int)fPlayerX * nMapWidth + (int)fPlayerY] == '#') {
-				fPlayerX += sinf(fPlayerA) * fSpeed * fElapsedTime;
-				fPlayerY += cosf(fPlayerA) * fSpeed * fElapsedTime;
-			}
-		}
-		for (int x = 0; x < nScreenWidth; ++x) {
-			// For each column, calulate the projected ray angle into space
-			float fRayAngle = (fPlayer - fFOV / 2.0f) + ((float)x / (float)nScreenWidth) * fFOV;
-		}
+		screen[nScreenWidth * nScreenHight - 1] = '\0';
+		WriteConsoleOutputCharacter(hConsole, screen, nScreemWidth * nScreenHight, { 0,0 }, &dwBytesWriten);
 	}
 }
