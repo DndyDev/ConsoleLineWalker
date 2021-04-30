@@ -1,0 +1,4 @@
+﻿  cl_walker.cpp
+C:\Users\Danis\source\repos\CommandLineWalker\CommandLineWalker\cl_walker.cpp(145,26): warning C4305: инициализация: усечение из "double" в "float"
+C:\Users\Danis\source\repos\CommandLineWalker\CommandLineWalker\cl_walker.cpp(154,17): warning C4244: инициализация: преобразование "float" в "int", возможна потеря данных
+  CommandLineWalker.vcxproj -> C:\Users\Danis\source\repos\CommandLineWalker\Debug\CommandLineWalker.exe
